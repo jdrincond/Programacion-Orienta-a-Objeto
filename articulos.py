@@ -1,8 +1,9 @@
+#importamos el conector de mysql
 import mysql.connector
 
 class Articulos:
     def abrir(self):
-        conexion = mysql.connector.connect(host="localhost", user="root", password="", database="bd2") 
+        conexion = mysql.connector.connect(host="localhost", user="root", password="", database="poobd") 
         return conexion
 
     def alta(self, datos):
