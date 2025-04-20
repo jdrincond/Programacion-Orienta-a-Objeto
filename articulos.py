@@ -1,31 +1,58 @@
 #importamos el conector de mysql
-import mysql.connector
+import mysql.connector  # Importar el conector de mysql
 
 class Articulos:
     def abrir(self):
-        conexion = mysql.connector.connect(host="localhost", user="root", password="", database="poobd") 
-        return conexion
+        try:
+            conexion = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="",
+                database="poobd",
+                port=3307  
+            )
+            return conexion
+        except mysql.connector.Error as err:
+            print(f"Error al conectar a la base de datos: {err}")
+            return None
 
     def alta(self, datos):
-        cone=self.abrir()
-        cursor=cone.cursor()
-        sql="insert into articulos (descripcion, precio) values (%s,%s)"
-        cursor.execute(sql, datos)
-        cone.commit()
-        cone.close()
+        conexion = self.abrir()
+        if conexion:
+            try:
+                with conexion.cursor() as cursor:
+                    sql = "INSERT INTO articulos (descripcion, precio) VALUES (%s, %s)"
+                    cursor.execute(sql, datos)
+                    conexion.commit()
+            except mysql.connector.Error as err:
+                print(f"Error al insertar datos: {err}")
+            finally:
+                conexion.close()
 
     def consulta(self, datos):
-        cone=self.abrir()
-        cursor=cone.cursor()
-        sql="select descripcion, precio from articulos where codigo=%s"
-        cursor.execute(sql,datos)
-        cone.close()        
-        return cursor.fetchall()# devuelve una lista de tuplas
-    
+        conexion = self.abrir()
+        if conexion:
+            try:
+                with conexion.cursor() as cursor:
+                    sql = "SELECT descripcion, precio FROM articulos WHERE codigo=%s"
+                    cursor.execute(sql, datos)
+                    return cursor.fetchall()  # devuelve una lista de tuplas
+            except mysql.connector.Error as err:
+                print(f"Error al consultar datos: {err}")
+                return []
+            finally:
+                conexion.close()
+
     def recuperar_todos(self):
-        cone=self.abrir()
-        cursor=cone.cursor()
-        sql="select codigo, descripcion, precio from articulos"
-        cursor.execute(sql)
-        cone.close()
-        return cursor.fetchall()
+        conexion = self.abrir()
+        if conexion:
+            try:
+                with conexion.cursor() as cursor:
+                    sql = "SELECT codigo, descripcion, precio FROM articulos"
+                    cursor.execute(sql)
+                    return cursor.fetchall()
+            except mysql.connector.Error as err:
+                print(f"Error al recuperar datos: {err}")
+                return []
+            finally:
+                conexion.close()
