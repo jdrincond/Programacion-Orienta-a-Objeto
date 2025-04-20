@@ -21,7 +21,7 @@ class Articulos:
         if conexion:
             try:
                 with conexion.cursor() as cursor:
-                    sql = "INSERT INTO articulos (descripcion, precio) VALUES (%s, %s)"
+                    sql = "INSERT INTO articulos (cantidad, descripcion, precio) VALUES (%s, %s, %s)"
                     cursor.execute(sql, datos)
                     conexion.commit()
             except mysql.connector.Error as err:
@@ -34,7 +34,7 @@ class Articulos:
         if conexion:
             try:
                 with conexion.cursor() as cursor:
-                    sql = "SELECT descripcion, precio FROM articulos WHERE codigo=%s"
+                    sql = "SELECT cantidad, descripcion, precio FROM articulos WHERE codigo=%s"
                     cursor.execute(sql, datos)
                     return cursor.fetchall()  # devuelve una lista de tuplas
             except mysql.connector.Error as err:
@@ -48,11 +48,28 @@ class Articulos:
         if conexion:
             try:
                 with conexion.cursor() as cursor:
-                    sql = "SELECT codigo, descripcion, precio FROM articulos"
+                    sql = "SELECT codigo, cantidad, descripcion, precio FROM articulos"
                     cursor.execute(sql)
                     return cursor.fetchall()
             except mysql.connector.Error as err:
                 print(f"Error al recuperar datos: {err}")
                 return []
+            finally:
+                conexion.close()
+    
+    def baja(self, codigo):
+        conexion = self.abrir()
+        if conexion:
+            try:
+                with conexion.cursor() as cursor:
+                    sql = "DELETE FROM articulos WHERE codigo=%s"
+                    cursor.execute(sql, (codigo,))
+                    conexion.commit()
+                    if cursor.rowcount > 0:
+                        print("Artículo eliminado correctamente.")
+                    else:
+                        print("No se encontró un artículo con ese código.")
+            except mysql.connector.Error as err:
+                print(f"Error al eliminar el artículo: {err}")
             finally:
                 conexion.close()

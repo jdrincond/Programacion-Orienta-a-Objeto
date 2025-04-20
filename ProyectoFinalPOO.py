@@ -1,45 +1,61 @@
-#Importar librerías necesarias
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox as mb
 from tkinter import scrolledtext as st
 import articulos
 
-# Crear la clase principal de la aplicación
 class FormulariosArticulos:
     def __init__(self):
         self.articulo1 = articulos.Articulos()
         self.ventana1 = tk.Tk()
-        self.ventana1.title("Formulario de artículos")
+        self.ventana1.title("Formulario de Artículos")
+        self.ventana1.configure(bg='#f0f0f0')
         self.cuaderno1 = ttk.Notebook(self.ventana1)
+
+        # Estilo personalizado para los LabelFrame
+        style = ttk.Style()
+        style.configure("Custom.TLabelframe", background="#f0f0f0")
+        style.configure("Custom.TLabelframe.Label", background="#f0f0f0")        
+        
         self.carga_articulos()
         self.consulta_por_codigo()
         self.listado_completo()
-        self.cuaderno1.grid(column=0, row=0, padx=10, pady=10)
+        self.eliminar_articulo()
+        self.cuaderno1.grid(column=0, row=0, padx=25, pady=25)            
         self.ventana1.mainloop()
         
     def carga_articulos(self):
         self.pagina1 = ttk.Frame(self.cuaderno1)
         self.cuaderno1.add(self.pagina1, text="Carga de artículos")
-        self.LabelFrame1 = ttk.LabelFrame(self.pagina1, text="Artículos")
+        self.LabelFrame1 = ttk.LabelFrame(self.pagina1, text="Artículos", style="Custom.TLabelframe")
         self.LabelFrame1.grid(column=0, row=0, padx=5, pady=10)
-        self.label1 = ttk.Label(self.LabelFrame1, text="Descripción: ")
-        self.label1.grid(column=0, row=0, padx=4, pady=4)
+        
+        self.label0 = ttk.Label(self.LabelFrame1, text="Cantidad: ", background="#f0f0f0")
+        self.label0.grid(column=0, row=0, padx=4, pady=4)
+        self.descripcioncantidad = tk.StringVar()
+        self.entrycantidad = ttk.Entry(self.LabelFrame1, textvariable=self.descripcioncantidad)
+        self.entrycantidad.grid(column=1, row=0, padx=4, pady=4)
+
+        self.label1 = ttk.Label(self.LabelFrame1, text="Descripción: ", background="#f0f0f0")
+        self.label1.grid(column=0, row=1, padx=4, pady=4)
         self.descripcioncarga = tk.StringVar()
         self.entrydescripcion = ttk.Entry(self.LabelFrame1, textvariable=self.descripcioncarga)
-        self.entrydescripcion.grid(column=1, row=0, padx=4, pady=4)
-        self.label2 = ttk.Label(self.LabelFrame1, text="Precio: ")        
-        self.label2.grid(column=0, row=1, padx=4, pady=4)     
+        self.entrydescripcion.grid(column=1, row=1, padx=4, pady=4)
+
+        self.label2 = ttk.Label(self.LabelFrame1, text="Precio: ", background="#f0f0f0")        
+        self.label2.grid(column=0, row=2, padx=4, pady=4)     
         self.preciocarga = tk.StringVar()
         self.entryprecio = ttk.Entry(self.LabelFrame1, textvariable=self.preciocarga)
-        self.entryprecio.grid(column=1, row=1, padx=4, pady=4)
+        self.entryprecio.grid(column=1, row=2, padx=4, pady=4)
+
         self.boton1 = ttk.Button(self.LabelFrame1, text="Confirmar", command=self.agregar)
-        self.boton1.grid(column=1, row=2, padx=4, pady=4)
+        self.boton1.grid(column=0, row=3, padx=4, pady=4)
 
     def agregar(self):
-        datos = (self.descripcioncarga.get(), self.preciocarga.get())
+        datos = (self.descripcioncantidad.get(), self.descripcioncarga.get(), self.preciocarga.get())
         self.articulo1.alta(datos)
         mb.showinfo("Información", "Los datos fueron cargados correctamente")
+        self.descripcioncantidad.set("")
         self.descripcioncarga.set("")
         self.preciocarga.set("")       
     
@@ -48,31 +64,43 @@ class FormulariosArticulos:
         self.cuaderno1.add(self.pagina2, text="Consulta por código")
         self.labelframe2 = ttk.LabelFrame(self.pagina2, text="Artículo")
         self.labelframe2.grid(column=0, row=0, padx=5, pady=10)
-        self.label1 = ttk.Label(self.labelframe2, text="Código: ")
-        self.label1.grid(column=0, row=0, padx=4, pady=4)
+
+        self.label0 = ttk.Label(self.labelframe2, text="Código: ")
+        self.label0.grid(column=0, row=0, padx=4, pady=4)
         self.codigo = tk.StringVar()
         self.entrycodigo = ttk.Entry(self.labelframe2, textvariable=self.codigo)
         self.entrycodigo.grid(column=1, row=0, padx=4, pady=4)
+
+        self.label1 = ttk.Label(self.labelframe2, text="Cantidad: ")
+        self.label1.grid(column=0, row=1, padx=4, pady=4)
+        self.cantidad = tk.StringVar()
+        self.entrycantidad = ttk.Entry(self.labelframe2, textvariable=self.cantidad, state="readonly")
+        self.entrycantidad.grid(column=1, row=1, padx=4, pady=4)
+
         self.label2 = ttk.Label(self.labelframe2, text="Descripción: ")
-        self.label2.grid(column=0, row=1, padx=4, pady=4)
+        self.label2.grid(column=0, row=2, padx=4, pady=4)
         self.descripcion = tk.StringVar()
         self.entrydescripcion = ttk.Entry(self.labelframe2, textvariable=self.descripcion, state="readonly")
-        self.entrydescripcion.grid(column=1, row=1, padx=4, pady=4)
+        self.entrydescripcion.grid(column=1, row=2, padx=4, pady=4)
+
         self.label3 = ttk.Label(self.labelframe2, text="Precio: ")
-        self.label3.grid(column=0, row=2, padx=4, pady=4)
+        self.label3.grid(column=0, row=3, padx=4, pady=4)
         self.precio = tk.StringVar()
         self.entryprecio = ttk.Entry(self.labelframe2, textvariable=self.precio, state="readonly")
-        self.entryprecio.grid(column=1, row=2, padx=4, pady=4)
+        self.entryprecio.grid(column=1, row=3, padx=4, pady=4)
+
         self.boton1 = ttk.Button(self.labelframe2, text="Consultar", command=self.consultar)
-        self.boton1.grid(column=0, row=3, padx=4, pady=4)
+        self.boton1.grid(column=0, row=4, padx=4, pady=4)
 
     def consultar(self):
         datos = (self.codigo.get(), ) 
         respuesta = self.articulo1.consulta(datos)
         if len(respuesta) > 0:
-            self.descripcion.set(respuesta[0][0])
-            self.precio.set(respuesta[0][1])
-        else:            
+            self.cantidad.set(respuesta[0][0])
+            self.descripcion.set(respuesta[0][1])
+            self.precio.set(respuesta[0][2])
+        else: 
+            self.cantidad.set("")           
             self.descripcion.set("")
             self.precio.set("") 
             mb.showinfo("Información", "No existe un artículo con dicho código")
@@ -91,6 +119,32 @@ class FormulariosArticulos:
         respuesta = self.articulo1.recuperar_todos()
         self.scrolledtext1.delete(1.0, tk.END)
         for fila in respuesta:
-            self.scrolledtext1.insert(tk.END, f"código: {fila[0]}\ndescripción: {fila[1]}\nprecio: {fila[2]}\n\n")
+            self.scrolledtext1.insert(tk.END, f"Código: {fila[0]}\nCantidad: {fila[1]}\nDescripción: {fila[2]}\nPrecio: {fila[3]}\n----------------------------\n")
 
-aplicacion1 = FormulariosArticulos()
+    def eliminar_articulo(self):
+        self.pagina4 = ttk.Frame(self.cuaderno1)
+        self.cuaderno1.add(self.pagina4, text="Eliminar artículo")
+        self.labelframe4 = ttk.LabelFrame(self.pagina4, text="Eliminar")
+        self.labelframe4.grid(column=0, row=0, padx=5, pady=10)
+        
+        self.label1 = ttk.Label(self.labelframe4, text="Código: ")
+        self.label1.grid(column=0, row=0, padx=4, pady=4)
+        self.codigoeliminar = tk.StringVar()
+        self.entrycodigoeliminar = ttk.Entry(self.labelframe4, textvariable=self.codigoeliminar)
+        self.entrycodigoeliminar.grid(column=1, row=0, padx=4, pady=4)
+        
+        self.boton1 = ttk.Button(self.labelframe4, text="Eliminar", command=self.eliminar)
+        self.boton1.grid(column=0, row=1, padx=4, pady=4)
+
+    def eliminar(self):
+        codigo = self.codigoeliminar.get()
+        if codigo:
+            respuesta = mb.askyesno("Confirmar", f"¿Está seguro de que desea eliminar el artículo con código {codigo}?")
+            if respuesta:
+                self.articulo1.baja(codigo)
+                mb.showinfo("Información", "El artículo fue eliminado correctamente.")
+                self.codigoeliminar.set("")
+        else:
+            mb.showwarning("Advertencia", "Debe ingresar un código.")
+
+APP = FormulariosArticulos()
